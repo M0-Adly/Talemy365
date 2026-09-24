@@ -12,20 +12,20 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'default', size = 'md', isLoading = false, children, disabled, ...props }, ref) => {
-    const baseStyles = 'inline-flex items-center justify-center rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50'
+    const baseStyles = 'inline-flex items-center justify-center rounded-xl font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.99]'
     
     const variants = {
-      default: 'bg-blue-600 text-white hover:bg-blue-700',
-      secondary: 'bg-gray-100 text-gray-900 hover:bg-gray-200',
-      outline: 'border border-gray-300 bg-transparent hover:bg-gray-50',
-      ghost: 'hover:bg-gray-100',
-      destructive: 'bg-red-600 text-white hover:bg-red-700'
+      default: 'bg-[#7C3AED] text-white hover:bg-[#6C2BD9] shadow-sm shadow-[#7C3AED]/20',
+      secondary: 'bg-[#EDE7FB] text-[#4C1D95] hover:bg-[#EDE7FB]/80',
+      outline: 'border border-[#7C3AED]/30 bg-white text-[#4C1D95] hover:bg-[#EDE7FB]',
+      ghost: 'text-[#4C1D95] hover:bg-[#EDE7FB]',
+      destructive: 'bg-[#4C1D95] text-white hover:bg-[#2D3748]'
     }
     
     const sizes = {
-      sm: 'h-9 px-3 text-sm min-h-[44px] min-w-[44px]',
+      sm: 'h-9 px-3.5 text-sm min-h-[44px] min-w-[44px]',
       md: 'h-11 px-5 min-w-[44px] min-h-[44px]',
-      lg: 'h-12 px-8 text-lg min-h-[44px]',
+      lg: 'h-12 px-8 text-base min-h-[44px]',
       icon: 'h-11 w-11 min-w-[44px] min-h-[44px]'
     }
 

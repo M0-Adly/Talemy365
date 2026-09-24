@@ -4,21 +4,21 @@ import { SITE_NAME } from '@/lib/constants'
 
 export function Footer() {
   return (
-    <footer className="mt-auto border-t border-gray-200 bg-gray-50">
+    <footer className="mt-auto border-t border-[#6C2BD9]/30 bg-[#4C1D95] text-white">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           {/* Brand info */}
           <div className="md:col-span-2">
             <Link
               href="/"
-              className="flex items-center gap-2.5 text-xl font-bold tracking-tight text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-lg w-fit"
+              className="flex items-center gap-2.5 text-xl font-bold tracking-tight text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] rounded-lg w-fit"
             >
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-white">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#6C2BD9] text-white">
                 <BookOpen className="h-5 w-5" />
               </div>
-              <span className="text-xl font-black text-gray-900">{SITE_NAME}</span>
+              <span className="text-xl font-black text-white">{SITE_NAME}</span>
             </Link>
-            <p className="mt-4 max-w-md text-sm leading-relaxed text-gray-600">
+            <p className="mt-4 max-w-md text-sm leading-relaxed text-[#EDE7FB]/80">
               An educational institution committed to structured, rigorous, and inspiring
               learning. Empowering individuals across foundational principles and specialized
               curriculum units.
@@ -27,14 +27,14 @@ export function Footer() {
 
           {/* Navigation Links */}
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-900">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-[#A78BFA]">
               Navigation
             </h3>
             <ul className="mt-4 space-y-2.5">
               <li>
                 <Link
                   href="/"
-                  className="inline-flex min-h-[36px] items-center text-sm text-gray-600 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded"
+                  className="inline-flex min-h-[36px] items-center text-sm text-[#EDE7FB] hover:text-[#A78BFA] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] rounded"
                 >
                   Home
                 </Link>
@@ -42,7 +42,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/curriculum"
-                  className="inline-flex min-h-[36px] items-center text-sm text-gray-600 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded"
+                  className="inline-flex min-h-[36px] items-center text-sm text-[#EDE7FB] hover:text-[#A78BFA] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] rounded"
                 >
                   Full Curriculum
                 </Link>
@@ -50,7 +50,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/foundation"
-                  className="inline-flex min-h-[36px] items-center text-sm text-gray-600 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded"
+                  className="inline-flex min-h-[36px] items-center text-sm text-[#EDE7FB] hover:text-[#A78BFA] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] rounded"
                 >
                   Foundation Course
                 </Link>
@@ -58,7 +58,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/contact"
-                  className="inline-flex min-h-[36px] items-center text-sm text-gray-600 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded"
+                  className="inline-flex min-h-[36px] items-center text-sm text-[#EDE7FB] hover:text-[#A78BFA] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] rounded"
                 >
                   Contact Us
                 </Link>
@@ -66,18 +66,18 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Contact & Transparency */}
+          {/* Contact & Inquiries */}
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-900">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-[#A78BFA]">
               Inquiries
             </h3>
-            <p className="mt-4 text-sm text-gray-600">
+            <p className="mt-4 text-sm text-[#EDE7FB]/80">
               Have questions regarding admissions, the curriculum, or study paths?
             </p>
             <div className="mt-4">
               <Link
                 href="/contact"
-                className="inline-flex min-h-[44px] items-center gap-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-lg"
+                className="inline-flex min-h-[44px] items-center gap-1.5 text-sm font-semibold text-[#A78BFA] hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] rounded-lg"
               >
                 <span>Send a message</span>
                 <ArrowUpRight className="h-4 w-4" />
@@ -86,12 +86,12 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col items-center justify-between border-t border-gray-200 pt-8 sm:flex-row">
-          <p className="text-xs text-gray-500">
+        <div className="mt-12 flex flex-col items-center justify-between border-t border-[#6C2BD9]/30 pt-8 sm:flex-row">
+          <p className="text-xs text-[#EDE7FB]/70">
             &copy; {new Date().getFullYear()} {SITE_NAME}. All rights reserved.
           </p>
           <div className="mt-4 flex items-center gap-6 sm:mt-0">
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-[#A78BFA]/80">
               Designed for clarity, performance, and accessibility.
             </span>
           </div>
