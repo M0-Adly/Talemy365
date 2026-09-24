@@ -3,20 +3,25 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X, BookOpen, Layers, Mail, Compass } from 'lucide-react'
-import { SITE_NAME } from '@/lib/constants'
+import { Menu, X, BookOpen, Layers, Mail, Compass, Globe } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
-
-const NAV_LINKS = [
-  { href: '/', label: 'Home', icon: Compass },
-  { href: '/curriculum', label: 'Curriculum', icon: BookOpen },
-  { href: '/foundation', label: 'Foundation Course', icon: Layers },
-  { href: '/contact', label: 'Contact', icon: Mail },
-]
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
+  const { lang, setLang, t } = useTranslation()
+
+  const NAV_LINKS = [
+    { href: '/', label: t('home'), icon: Compass },
+    { href: '/curriculum', label: t('curriculum'), icon: BookOpen },
+    { href: '/foundation', label: t('foundation'), icon: Layers },
+    { href: '/contact', label: t('contact'), icon: Mail },
+  ]
+
+  const toggleLanguage = () => {
+    setLang(lang === 'ar' ? 'en' : 'ar')
+  }
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-gray-100 bg-white/95 backdrop-blur-md transition-all">
@@ -25,13 +30,13 @@ export function Header() {
         <Link
           href="/"
           className="group flex items-center gap-2.5 rounded-lg py-2 text-xl font-bold tracking-tight text-blue-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
-          aria-label={`${SITE_NAME} Home`}
+          aria-label="Home"
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow-sm transition-transform group-hover:scale-105">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow-xs transition-transform group-hover:scale-105">
             <BookOpen className="h-5 w-5" />
           </div>
           <span className="text-xl font-black text-gray-900 group-hover:text-blue-600">
-            {SITE_NAME}
+            {t('brandName')}
           </span>
         </Link>
 
@@ -60,26 +65,48 @@ export function Header() {
           })}
         </nav>
 
-        {/* Desktop CTA */}
+        {/* Desktop CTA + Language Switcher */}
         <div className="hidden items-center gap-3 md:flex">
+          {/* Language Switcher */}
+          <button
+            type="button"
+            onClick={toggleLanguage}
+            className="flex min-h-[44px] items-center gap-1.5 rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-bold text-gray-700 hover:bg-gray-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+            title="Switch Language / تغيير اللغة"
+          >
+            <Globe className="h-4 w-4 text-blue-600" />
+            <span>{lang === 'ar' ? 'English' : 'عربي'}</span>
+          </button>
+
           <Link
             href="/curriculum"
-            className="flex min-h-[44px] items-center justify-center rounded-lg bg-blue-600 px-5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+            className="flex min-h-[44px] items-center justify-center rounded-lg bg-blue-600 px-5 text-sm font-semibold text-white shadow-xs transition-all hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
           >
-            Explore Units
+            {t('exploreUnits')}
           </Link>
         </div>
 
-        {/* Mobile menu button */}
-        <button
-          type="button"
-          onClick={() => setIsOpen(!isOpen)}
-          className="flex h-11 w-11 items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 md:hidden"
-          aria-expanded={isOpen}
-          aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
-        >
-          {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+        {/* Mobile controls: Lang toggle + menu button */}
+        <div className="flex items-center gap-2 md:hidden">
+          <button
+            type="button"
+            onClick={toggleLanguage}
+            className="flex h-11 items-center gap-1 rounded-lg border border-gray-200 bg-gray-50 px-3 text-xs font-bold text-gray-700"
+          >
+            <Globe className="h-4 w-4 text-blue-600" />
+            <span>{lang === 'ar' ? 'EN' : 'عربي'}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setIsOpen(!isOpen)}
+            className="flex h-11 w-11 items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+            aria-expanded={isOpen}
+            aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
+          >
+            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile dropdown */}
@@ -108,13 +135,13 @@ export function Header() {
                 </Link>
               )
             })}
-            <div className="mt-3 pt-3 border-t border-gray-100">
+            <div className="mt-3 pt-3 border-t border-gray-100 space-y-2">
               <Link
                 href="/contact"
                 onClick={() => setIsOpen(false)}
-                className="flex min-h-[44px] w-full items-center justify-center rounded-lg bg-blue-600 px-4 py-3 text-base font-semibold text-white shadow-sm hover:bg-blue-700"
+                className="flex min-h-[44px] w-full items-center justify-center rounded-lg bg-blue-600 px-4 py-3 text-base font-semibold text-white shadow-xs hover:bg-blue-700"
               >
-                Get in Touch
+                {t('getInTouch')}
               </Link>
             </div>
           </nav>

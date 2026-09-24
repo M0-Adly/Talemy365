@@ -1,12 +1,12 @@
 import 'server-only'
 
-import { createClient } from '@/lib/supabase/server'
+import { createPublicClient } from '@/lib/supabase/public'
 import type { Course, CourseWithContents, CourseCategory } from '@/types/database'
 
 export async function getCourses(category: CourseCategory): Promise<Course[]> {
   try {
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return []
-    const supabase = await createClient()
+    const supabase = createPublicClient()
 
     const { data, error } = await supabase
       .from('courses')
@@ -30,7 +30,7 @@ export async function getCourses(category: CourseCategory): Promise<Course[]> {
 export async function getCourse(id: string): Promise<CourseWithContents | null> {
   try {
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return null
-    const supabase = await createClient()
+    const supabase = createPublicClient()
 
     const { data, error } = await supabase
       .from('courses')
@@ -70,7 +70,7 @@ export async function getCourse(id: string): Promise<CourseWithContents | null> 
 export async function getAllCourses(): Promise<Course[]> {
   try {
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return []
-    const supabase = await createClient()
+    const supabase = createPublicClient()
 
     const { data, error } = await supabase
       .from('courses')
@@ -95,7 +95,7 @@ export async function getAllCoursesWithContents(
 ): Promise<CourseWithContents[]> {
   try {
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return []
-    const supabase = await createClient()
+    const supabase = createPublicClient()
 
     let query = supabase
       .from('courses')
