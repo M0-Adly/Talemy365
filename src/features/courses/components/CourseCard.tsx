@@ -1,6 +1,9 @@
+'use client'
+
 import Link from 'next/link'
 import { Clock, BookOpen, ChevronRight } from 'lucide-react'
 import type { Course } from '@/types/database'
+import { useTranslation } from '@/lib/i18n'
 
 interface CourseCardProps {
   course: Course
@@ -8,6 +11,8 @@ interface CourseCardProps {
 }
 
 export function CourseCard({ course, index }: CourseCardProps) {
+  const { t } = useTranslation()
+
   return (
     <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-[#EDE7FB] bg-white p-6 shadow-xs transition-all duration-200 hover:-translate-y-1 hover:border-[#8B5CF6]/40 hover:shadow-md">
       <div>
@@ -17,7 +22,7 @@ export function CourseCard({ course, index }: CourseCardProps) {
           </div>
           {index !== undefined && (
             <span className="text-xs font-bold tracking-widest uppercase text-[#6B5B95]">
-              Unit {String(index + 1).padStart(2, '0')}
+              {t('unit')} {String(index + 1).padStart(2, '0')}
             </span>
           )}
         </div>
@@ -48,7 +53,7 @@ export function CourseCard({ course, index }: CourseCardProps) {
           className="inline-flex min-h-[44px] items-center gap-1 text-sm font-semibold text-[#7C3AED] hover:text-[#6C2BD9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] rounded-lg py-2"
           aria-label={`View course details for ${course.title}`}
         >
-          <span>View Unit</span>
+          <span>{t('viewUnit')}</span>
           <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
         </Link>
       </div>

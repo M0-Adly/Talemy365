@@ -1,8 +1,12 @@
+'use client'
+
 import Link from 'next/link'
 import { BookOpen, ArrowUpRight } from 'lucide-react'
-import { SITE_NAME } from '@/lib/constants'
+import { useTranslation } from '@/lib/i18n'
 
 export function Footer() {
+  const { t } = useTranslation()
+
   return (
     <footer className="mt-auto border-t border-[#6C2BD9]/30 bg-[#4C1D95] text-white">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -16,19 +20,17 @@ export function Footer() {
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#6C2BD9] text-white">
                 <BookOpen className="h-5 w-5" />
               </div>
-              <span className="text-xl font-black text-white">{SITE_NAME}</span>
+              <span className="text-xl font-black text-white">{t('brandName')}</span>
             </Link>
             <p className="mt-4 max-w-md text-sm leading-relaxed text-[#EDE7FB]/80">
-              An educational institution committed to structured, rigorous, and inspiring
-              learning. Empowering individuals across foundational principles and specialized
-              curriculum units.
+              {t('footerDesc')}
             </p>
           </div>
 
           {/* Navigation Links */}
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-[#A78BFA]">
-              Navigation
+              {t('navigation')}
             </h3>
             <ul className="mt-4 space-y-2.5">
               <li>
@@ -36,7 +38,7 @@ export function Footer() {
                   href="/"
                   className="inline-flex min-h-[36px] items-center text-sm text-[#EDE7FB] hover:text-[#A78BFA] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] rounded"
                 >
-                  Home
+                  {t('home')}
                 </Link>
               </li>
               <li>
@@ -44,7 +46,7 @@ export function Footer() {
                   href="/curriculum"
                   className="inline-flex min-h-[36px] items-center text-sm text-[#EDE7FB] hover:text-[#A78BFA] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] rounded"
                 >
-                  Full Curriculum
+                  {t('fullCurriculum')}
                 </Link>
               </li>
               <li>
@@ -52,7 +54,7 @@ export function Footer() {
                   href="/foundation"
                   className="inline-flex min-h-[36px] items-center text-sm text-[#EDE7FB] hover:text-[#A78BFA] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] rounded"
                 >
-                  Foundation Course
+                  {t('foundation')}
                 </Link>
               </li>
               <li>
@@ -60,7 +62,7 @@ export function Footer() {
                   href="/contact"
                   className="inline-flex min-h-[36px] items-center text-sm text-[#EDE7FB] hover:text-[#A78BFA] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] rounded"
                 >
-                  Contact Us
+                  {t('contact')}
                 </Link>
               </li>
             </ul>
@@ -69,17 +71,17 @@ export function Footer() {
           {/* Contact & Inquiries */}
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-[#A78BFA]">
-              Inquiries
+              {t('inquiries')}
             </h3>
             <p className="mt-4 text-sm text-[#EDE7FB]/80">
-              Have questions regarding admissions, the curriculum, or study paths?
+              {t('inquiriesDesc')}
             </p>
             <div className="mt-4">
               <Link
                 href="/contact"
                 className="inline-flex min-h-[44px] items-center gap-1.5 text-sm font-semibold text-[#A78BFA] hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] rounded-lg"
               >
-                <span>Send a message</span>
+                <span>{t('sendAMessage')}</span>
                 <ArrowUpRight className="h-4 w-4" />
               </Link>
             </div>
@@ -88,11 +90,11 @@ export function Footer() {
 
         <div className="mt-12 flex flex-col items-center justify-between border-t border-[#6C2BD9]/30 pt-8 sm:flex-row">
           <p className="text-xs text-[#EDE7FB]/70">
-            &copy; {new Date().getFullYear()} {SITE_NAME}. All rights reserved.
+            &copy; {new Date().getFullYear()} {t('brandName')}. {t('rightsReserved')}
           </p>
           <div className="mt-4 flex items-center gap-6 sm:mt-0">
             <span className="text-xs text-[#A78BFA]/80">
-              Designed for clarity, performance, and accessibility.
+              {t('designQuality')}
             </span>
           </div>
         </div>

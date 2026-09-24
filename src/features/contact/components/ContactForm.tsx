@@ -7,10 +7,12 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { CheckCircle2, AlertCircle, Send } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 import type { ActionResult } from '@/lib/errors'
 
 export function ContactForm() {
   const formRef = useRef<HTMLFormElement>(null)
+  const { t } = useTranslation()
 
   const [state, formAction, isPending] = useActionState(
     async (_prevState: ActionResult<unknown> | null, formData: FormData) => {
@@ -24,15 +26,13 @@ export function ContactForm() {
   )
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-6 sm:p-10 shadow-sm">
+    <div className="rounded-2xl border border-[#EDE7FB] bg-white p-6 sm:p-10 shadow-xs">
       {state?.success && (
-        <div className="mb-6 flex items-start gap-3 rounded-xl bg-emerald-50 border border-emerald-200 p-4 text-emerald-800">
-          <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600 mt-0.5" />
+        <div className="mb-6 flex items-start gap-3 rounded-xl bg-[#EDE7FB] border border-[#8B5CF6]/30 p-4 text-[#4C1D95]">
+          <CheckCircle2 className="h-5 w-5 shrink-0 text-[#7C3AED] mt-0.5" />
           <div>
-            <h4 className="font-semibold text-emerald-900">Message sent successfully</h4>
-            <p className="mt-1 text-sm text-emerald-700">
-              Thank you for reaching out. We have received your inquiry and our team will get back to you shortly.
-            </p>
+            <h4 className="font-semibold text-[#4C1D95]">{t('msgSuccess')}</h4>
+            <p className="mt-1 text-sm text-[#2D3748]">{t('msgSuccessDesc')}</p>
           </div>
         </div>
       )}
@@ -41,7 +41,7 @@ export function ContactForm() {
         <div className="mb-6 flex items-start gap-3 rounded-xl bg-rose-50 border border-rose-200 p-4 text-rose-800">
           <AlertCircle className="h-5 w-5 shrink-0 text-rose-600 mt-0.5" />
           <div>
-            <h4 className="font-semibold text-rose-900">Unable to send message</h4>
+            <h4 className="font-semibold text-rose-900">{t('msgError')}</h4>
             <p className="mt-1 text-sm text-rose-700">{state.error}</p>
           </div>
         </div>
@@ -61,49 +61,52 @@ export function ContactForm() {
         </div>
 
         <div>
-          <Label htmlFor="name" required>
-            Full Name
+          <Label htmlFor="name" required className="text-[#4C1D95]">
+            {t('fullName')}
           </Label>
           <div className="mt-2">
             <Input
               id="name"
               name="name"
               type="text"
-              placeholder="e.g. Sarah Ahmad"
+              placeholder={t('namePlaceholder')}
               required
               disabled={isPending}
+              className="border-[#EDE7FB] focus-visible:ring-[#7C3AED]"
             />
           </div>
         </div>
 
         <div>
-          <Label htmlFor="email" required>
-            Email Address
+          <Label htmlFor="email" required className="text-[#4C1D95]">
+            {t('emailAddress')}
           </Label>
           <div className="mt-2">
             <Input
               id="email"
               name="email"
               type="email"
-              placeholder="e.g. sarah@example.com"
+              placeholder={t('emailPlaceholder')}
               required
               disabled={isPending}
+              className="border-[#EDE7FB] focus-visible:ring-[#7C3AED]"
             />
           </div>
         </div>
 
         <div>
-          <Label htmlFor="message" required>
-            Your Message
+          <Label htmlFor="message" required className="text-[#4C1D95]">
+            {t('yourMessage')}
           </Label>
           <div className="mt-2">
             <Textarea
               id="message"
               name="message"
               rows={5}
-              placeholder="How can we assist you with our curriculum or enrollment?"
+              placeholder={t('messagePlaceholder')}
               required
               disabled={isPending}
+              className="border-[#EDE7FB] focus-visible:ring-[#7C3AED]"
             />
           </div>
         </div>
@@ -116,7 +119,7 @@ export function ContactForm() {
           disabled={isPending}
         >
           <Send className="mr-2 h-4 w-4" />
-          <span>Send Message</span>
+          <span>{t('sendMessage')}</span>
         </Button>
       </form>
     </div>
