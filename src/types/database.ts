@@ -9,6 +9,7 @@ export interface Course {
   display_order: number
   is_published: boolean
   icon: string | null
+  image_url: string | null
   created_at: string
   updated_at: string
 }

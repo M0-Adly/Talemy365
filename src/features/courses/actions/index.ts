@@ -14,6 +14,7 @@ export async function createCourse(formData: FormData): Promise<ActionResult<Cou
       category: formData.get('category') as string,
       duration: (formData.get('duration') as string) || null,
       icon: (formData.get('icon') as string) || null,
+      image_url: (formData.get('image_url') as string) || null,
       is_published: formData.get('is_published') === 'true' || formData.get('is_published') === 'on',
     }
 
@@ -48,6 +49,7 @@ export async function updateCourse(id: string, formData: FormData): Promise<Acti
       category: formData.get('category') as string,
       duration: (formData.get('duration') as string) || null,
       icon: (formData.get('icon') as string) || null,
+      image_url: (formData.get('image_url') as string) || null,
       is_published: formData.get('is_published') === 'true' || formData.get('is_published') === 'on',
     }
 

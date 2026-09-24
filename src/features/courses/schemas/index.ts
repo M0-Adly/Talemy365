@@ -21,6 +21,11 @@ export const courseSchema = z.object({
     .max(100, 'Icon must be 100 characters or less')
     .nullable()
     .default(null),
+  image_url: z
+    .string()
+    .max(1000, 'Image URL must be 1000 characters or less')
+    .nullable()
+    .default(null),
   is_published: z.boolean().default(true),
 })
 
