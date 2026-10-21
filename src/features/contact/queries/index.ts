@@ -1,12 +1,12 @@
 import 'server-only'
 
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import type { ContactSubmission } from '@/types/database'
 
 export async function getSubmissions(): Promise<ContactSubmission[]> {
   try {
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return []
-    const supabase = await createClient()
+    const supabase = createAdminClient()
 
     const { data, error } = await supabase
       .from('contact_submissions')
@@ -28,7 +28,7 @@ export async function getSubmissions(): Promise<ContactSubmission[]> {
 export async function getUnreadCount(): Promise<number> {
   try {
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return 0
-    const supabase = await createClient()
+    const supabase = createAdminClient()
 
     const { count, error } = await supabase
       .from('contact_submissions')

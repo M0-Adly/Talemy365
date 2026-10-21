@@ -12,6 +12,7 @@ import {
   Menu,
   X,
   ExternalLink,
+  Shield,
 } from 'lucide-react'
 import { logout } from '@/features/auth/actions'
 import { cn } from '@/lib/utils'
@@ -34,6 +35,12 @@ const ADMIN_LINKS = [
     href: `${ADMIN_PATH}/contact-submissions`,
     label: 'الرسائل الواردة',
     icon: MessageSquare,
+    exact: false,
+  },
+  {
+    href: `${ADMIN_PATH}/admins`,
+    label: 'إدارة المدراء',
+    icon: Shield,
     exact: false,
   },
 ]

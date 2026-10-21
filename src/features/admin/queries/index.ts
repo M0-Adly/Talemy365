@@ -1,6 +1,7 @@
 import 'server-only'
 
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+import type { ContactSubmission } from '@/types/database'
 
 export async function getDashboardStats() {
   try {
@@ -11,12 +12,13 @@ export async function getDashboardStats() {
         draftCourses: 0,
         unreadMessages: 0,
         recentCourses: [],
+        recentMessages: [],
       }
     }
 
-    const supabase = await createClient()
+    const supabase = createAdminClient()
 
-    const [coursesResult, publishedResult, unreadResult, recentResult] =
+    const [coursesResult, publishedResult, unreadResult, recentResult, recentMessagesResult] =
       await Promise.all([
         supabase.from('courses').select('*', { count: 'exact', head: true }),
         supabase
@@ -29,8 +31,13 @@ export async function getDashboardStats() {
           .eq('is_read', false),
         supabase
           .from('courses')
-          .select('id, title, updated_at, is_published, category')
+          .select('id, title, updated_at, is_published, category, image_url')
           .order('updated_at', { ascending: false })
+          .limit(5),
+        supabase
+          .from('contact_submissions')
+          .select('*')
+          .order('created_at', { ascending: false })
           .limit(5),
       ])
 
@@ -52,7 +59,9 @@ export async function getDashboardStats() {
         updated_at: string
         is_published: boolean
         category: string
+        image_url: string | null
       }>,
+      recentMessages: (recentMessagesResult.data ?? []) as ContactSubmission[],
     }
   } catch (err) {
     console.error('Error in getDashboardStats:', err)
@@ -62,6 +71,7 @@ export async function getDashboardStats() {
       draftCourses: 0,
       unreadMessages: 0,
       recentCourses: [],
+      recentMessages: [],
     }
   }
 }

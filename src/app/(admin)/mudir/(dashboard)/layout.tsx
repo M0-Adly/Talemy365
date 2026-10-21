@@ -1,7 +1,8 @@
 import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import { cookies } from 'next/headers'
 import { AdminSidebar } from '@/features/admin/components/AdminSidebar'
 import { LOGIN_PATH } from '@/lib/constants'
+import { verifyAdminToken, ADMIN_COOKIE_NAME } from '@/lib/auth-session'
 
 export const dynamic = 'force-dynamic'
 
@@ -10,12 +11,11 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const cookieStore = await cookies()
+  const token = cookieStore.get(ADMIN_COOKIE_NAME)?.value
+  const session = await verifyAdminToken(token)
 
-  if (!user) {
+  if (!session) {
     redirect(LOGIN_PATH)
   }
 
