@@ -58,12 +58,12 @@ export function AdminSidebar() {
       {/* Mobile Topbar */}
       <div className="flex h-16 items-center justify-between border-b border-[#EDE7FB] bg-white px-4 md:hidden">
         <div className="flex items-center gap-2.5">
-          <div className="relative h-9 w-9 overflow-hidden rounded-xl border border-[#EDE7FB] bg-white">
+          <div className="relative h-10 w-10 overflow-hidden rounded-xl border border-[#EDE7FB] bg-white p-1">
             <Image
               src="/logo.jpeg"
               alt="Logo"
               fill
-              className="object-cover"
+              className="object-contain"
             />
           </div>
           <span className="font-bold text-[#4C1D95]">لوحة تحكم تعلّمي</span>
@@ -90,12 +90,12 @@ export function AdminSidebar() {
         {/* Header / Brand */}
         <div className="flex h-16 items-center justify-between border-b border-[#EDE7FB] px-6 bg-white">
           <div className="flex items-center gap-3">
-            <div className="relative h-9 w-9 overflow-hidden rounded-xl border border-[#EDE7FB] bg-white">
+            <div className="relative h-10 w-10 overflow-hidden rounded-xl border border-[#EDE7FB] bg-white p-1">
               <Image
                 src="/logo.jpeg"
                 alt="Logo"
                 fill
-                className="object-cover"
+                className="object-contain"
               />
             </div>
             <div>

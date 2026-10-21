@@ -1,6 +1,6 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { success, failure, getErrorMessage, type ActionResult } from '@/lib/errors'
 import { revalidateCourses, revalidateCourse } from '@/lib/cache'
 import { courseSchema, contentSchema, reorderSchema } from '@/features/courses/schemas'
@@ -23,7 +23,7 @@ export async function createCourse(formData: FormData): Promise<ActionResult<Cou
       return failure(parsed.error.issues[0]?.message || 'Validation failed')
     }
 
-    const supabase = await createClient()
+    const supabase = createAdminClient()
     const { data, error } = await supabase
       .from('courses')
       .insert(parsed.data)
@@ -58,7 +58,7 @@ export async function updateCourse(id: string, formData: FormData): Promise<Acti
       return failure(parsed.error.issues[0]?.message || 'Validation failed')
     }
 
-    const supabase = await createClient()
+    const supabase = createAdminClient()
     const { data, error } = await supabase
       .from('courses')
       .update(parsed.data)
@@ -79,7 +79,7 @@ export async function updateCourse(id: string, formData: FormData): Promise<Acti
 
 export async function deleteCourse(id: string): Promise<ActionResult> {
   try {
-    const supabase = await createClient()
+    const supabase = createAdminClient()
     const { error } = await supabase
       .from('courses')
       .delete()
@@ -98,7 +98,7 @@ export async function deleteCourse(id: string): Promise<ActionResult> {
 
 export async function toggleCoursePublished(id: string, isPublished: boolean): Promise<ActionResult<Course>> {
   try {
-    const supabase = await createClient()
+    const supabase = createAdminClient()
     const { data, error } = await supabase
       .from('courses')
       .update({ is_published: isPublished })
@@ -124,7 +124,7 @@ export async function reorderCourses(data: { items: { id: string; display_order:
       return failure(parsed.error.issues[0]?.message || 'Validation failed')
     }
 
-    const supabase = await createClient()
+    const supabase = createAdminClient()
     
     for (const item of parsed.data.items) {
       const { error } = await supabase
@@ -155,7 +155,7 @@ export async function createContent(courseId: string, formData: FormData): Promi
       return failure(parsed.error.issues[0]?.message || 'Validation failed')
     }
 
-    const supabase = await createClient()
+    const supabase = createAdminClient()
     const { data, error } = await supabase
       .from('course_contents')
       .insert({ ...parsed.data, course_id: courseId })
@@ -184,7 +184,7 @@ export async function updateContent(id: string, formData: FormData): Promise<Act
       return failure(parsed.error.issues[0]?.message || 'Validation failed')
     }
 
-    const supabase = await createClient()
+    const supabase = createAdminClient()
     const { data, error } = await supabase
       .from('course_contents')
       .update(parsed.data)
@@ -207,7 +207,7 @@ export async function updateContent(id: string, formData: FormData): Promise<Act
 
 export async function deleteContent(id: string, courseId: string): Promise<ActionResult> {
   try {
-    const supabase = await createClient()
+    const supabase = createAdminClient()
     const { error } = await supabase
       .from('course_contents')
       .delete()
@@ -231,7 +231,7 @@ export async function reorderContents(courseId: string, data: { items: { id: str
       return failure(parsed.error.issues[0]?.message || 'Validation failed')
     }
 
-    const supabase = await createClient()
+    const supabase = createAdminClient()
     
     for (const item of parsed.data.items) {
       const { error } = await supabase

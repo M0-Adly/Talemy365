@@ -19,12 +19,12 @@ export function LoginForm() {
   return (
     <div className="w-full max-w-md rounded-3xl border border-[#EDE7FB] bg-white p-8 sm:p-10 shadow-lg">
       <div className="text-center">
-        <div className="relative mx-auto h-16 w-16 overflow-hidden rounded-2xl border-2 border-[#EDE7FB] bg-white shadow-xs p-1">
+        <div className="relative mx-auto h-20 w-20 overflow-hidden rounded-2xl border-2 border-[#EDE7FB] bg-white shadow-xs p-1">
           <Image
             src="/logo.jpeg"
             alt="Logo"
             fill
-            className="object-cover"
+            className="object-contain"
             priority
           />
         </div>

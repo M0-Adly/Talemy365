@@ -73,8 +73,8 @@ export function CourseCard({ course, index }: CourseCardProps) {
           className="inline-flex min-h-[44px] items-center gap-1 text-sm font-semibold text-[#7C3AED] hover:text-[#6C2BD9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] rounded-lg py-2"
           aria-label={`View course details for ${course.title}`}
         >
-          <span>{t('viewUnit')}</span>
-          <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+          <span>{t('viewDetails')}</span>
+          <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5" />
         </Link>
       </div>
     </div>

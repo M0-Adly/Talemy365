@@ -18,12 +18,12 @@ export function Footer() {
               href="/"
               className="flex items-center gap-3 text-xl font-bold tracking-tight text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] rounded-lg w-fit"
             >
-              <div className="relative h-10 w-10 overflow-hidden rounded-xl bg-white p-0.5">
+              <div className="relative h-11 w-11 overflow-hidden rounded-xl bg-white p-1">
                 <Image
                   src="/logo.jpeg"
                   alt="Talemy365 Logo"
                   fill
-                  className="object-cover"
+                  className="object-contain"
                 />
               </div>
               <span className="text-xl font-black text-white">{t('brandName')}</span>

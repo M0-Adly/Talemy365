@@ -33,12 +33,12 @@ export function Header() {
           className="group flex items-center gap-3 rounded-lg py-1 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]"
           aria-label="Home"
         >
-          <div className="relative h-10 w-10 overflow-hidden rounded-xl border border-[#EDE7FB] bg-white shadow-xs transition-transform group-hover:scale-105">
+          <div className="relative h-11 w-11 overflow-hidden rounded-xl border border-[#EDE7FB] bg-white p-1 shadow-xs transition-transform group-hover:scale-105">
             <Image
               src="/logo.jpeg"
               alt="Talemy365 Logo"
               fill
-              className="object-cover"
+              className="object-contain"
               priority
             />
           </div>
