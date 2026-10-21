@@ -95,6 +95,24 @@ export function ContactForm() {
         </div>
 
         <div>
+          <Label htmlFor="whatsapp" className="text-[#4C1D95] flex items-center justify-between">
+            <span>{t('whatsappNumber')}</span>
+            <span className="text-xs font-normal text-[#6B5B95]">اختياري للرد السريع</span>
+          </Label>
+          <div className="mt-2">
+            <Input
+              id="whatsapp"
+              name="whatsapp"
+              type="tel"
+              dir="ltr"
+              placeholder={t('whatsappPlaceholder')}
+              disabled={isPending}
+              className="border-[#EDE7FB] focus-visible:ring-[#7C3AED] text-left"
+            />
+          </div>
+        </div>
+
+        <div>
           <Label htmlFor="message" required className="text-[#4C1D95]">
             {t('yourMessage')}
           </Label>

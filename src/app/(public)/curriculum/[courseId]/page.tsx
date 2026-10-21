@@ -10,7 +10,7 @@ import { getCourse } from '@/features/courses/queries'
 import { SITE_NAME } from '@/lib/constants'
 import { formatDate } from '@/lib/utils'
 
-export const revalidate = 3600
+export const revalidate = 0
 
 interface CoursePageProps {
   params: Promise<{

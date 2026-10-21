@@ -4,7 +4,7 @@ import { BookOpen, GraduationCap, ArrowRight } from 'lucide-react'
 import { getCourses } from '@/features/courses/queries'
 import { CourseList } from '@/features/courses/components/CourseList'
 
-export const revalidate = 3600
+export const revalidate = 0
 
 export default async function HomePage() {
   const [curriculumItems, courseItems] = await Promise.all([

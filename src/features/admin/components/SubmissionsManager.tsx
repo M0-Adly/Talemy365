@@ -156,12 +156,19 @@ export function SubmissionsManager({
                         </span>
                       )}
                     </div>
-                    <a
-                      href={`mailto:${item.email}`}
-                      className="text-xs font-semibold text-[#7C3AED] hover:underline"
-                    >
-                      {item.email}
-                    </a>
+                    <div className="flex flex-wrap items-center gap-2 mt-1">
+                      <a
+                        href={`mailto:${item.email}`}
+                        className="text-xs font-semibold text-[#7C3AED] hover:underline"
+                      >
+                        {item.email}
+                      </a>
+                      {item.whatsapp && (
+                        <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-xs font-bold text-emerald-700" dir="ltr">
+                          واتساب: {item.whatsapp}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
 
@@ -182,13 +189,30 @@ export function SubmissionsManager({
 
               {/* Actions Footer */}
               <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-[#EDE7FB] pt-4">
-                <a
-                  href={`mailto:${item.email}?subject=بخصوص استفسارك في منصة تعلّمي 365`}
-                  className="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl border border-[#EDE7FB] bg-white px-4 py-2 text-xs font-bold text-[#4C1D95] hover:bg-[#EDE7FB]"
-                >
-                  <CornerDownRight className="h-4 w-4 text-[#7C3AED]" />
-                  <span>الرد عبر البريد</span>
-                </a>
+                <div className="flex flex-wrap items-center gap-2">
+                  <a
+                    href={`mailto:${item.email}?subject=بخصوص استفسارك في منصة تعلّمي 365`}
+                    className="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl border border-[#EDE7FB] bg-white px-4 py-2 text-xs font-bold text-[#4C1D95] hover:bg-[#EDE7FB]"
+                  >
+                    <CornerDownRight className="h-4 w-4 text-[#7C3AED]" />
+                    <span>الرد عبر البريد</span>
+                  </a>
+
+                  {item.whatsapp && (
+                    <a
+                      href={`https://wa.me/${(() => {
+                        let cleaned = item.whatsapp.replace(/[^0-9]/g, '');
+                        if (cleaned.startsWith('01')) cleaned = '20' + cleaned.substring(1);
+                        return cleaned;
+                      })()}?text=${encodeURIComponent(`مرحباً ${item.name}، بخصوص استفسارك في منصة تعلّمي 365:`)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-700 shadow-xs transition-colors"
+                    >
+                      <span>💬 رد عبر واتساب مباشرة</span>
+                    </a>
+                  )}
+                </div>
 
                 <div className="flex items-center gap-2">
                   <button

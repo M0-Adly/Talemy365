@@ -11,6 +11,7 @@ export async function submitContact(formData: FormData): Promise<ActionResult<Co
     const rawData = {
       name: formData.get('name') as string,
       email: formData.get('email') as string,
+      whatsapp: (formData.get('whatsapp') as string) || '',
       message: formData.get('message') as string,
       honeypot: formData.get('honeypot') as string,
     }
@@ -29,16 +30,41 @@ export async function submitContact(formData: FormData): Promise<ActionResult<Co
 
     // Using createAdminClient bypasses RLS and ensures contact submissions are ALWAYS saved
     const supabase = createAdminClient()
-    const { data, error } = await supabase
+    const insertPayload: Record<string, unknown> = {
+      name: dataToInsert.name.trim(),
+      email: dataToInsert.email.trim().toLowerCase(),
+      message: dataToInsert.message.trim(),
+      is_read: false,
+    }
+
+    if (dataToInsert.whatsapp?.trim()) {
+      insertPayload.whatsapp = dataToInsert.whatsapp.trim()
+    }
+
+    let { data, error } = await supabase
       .from('contact_submissions')
-      .insert({
-        name: dataToInsert.name.trim(),
-        email: dataToInsert.email.trim().toLowerCase(),
-        message: dataToInsert.message.trim(),
-        is_read: false,
-      })
+      .insert(insertPayload)
       .select()
       .single()
+
+    // Graceful fallback if whatsapp column has not been added to database yet
+    if (error && error.message?.includes('whatsapp')) {
+      const fallbackPayload = {
+        name: dataToInsert.name.trim(),
+        email: dataToInsert.email.trim().toLowerCase(),
+        message: dataToInsert.whatsapp?.trim()
+          ? `[واتساب: ${dataToInsert.whatsapp.trim()}]\n\n${dataToInsert.message.trim()}`
+          : dataToInsert.message.trim(),
+        is_read: false,
+      }
+      const fallbackRes = await supabase
+        .from('contact_submissions')
+        .insert(fallbackPayload)
+        .select()
+        .single()
+      data = fallbackRes.data
+      error = fallbackRes.error
+    }
 
     if (error) {
       console.error('Error inserting contact submission:', error)

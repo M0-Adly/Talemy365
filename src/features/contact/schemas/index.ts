@@ -9,6 +9,10 @@ export const contactFormSchema = z.object({
     .string()
     .min(1, 'Email is required')
     .email('Please enter a valid email address'),
+  whatsapp: z
+    .string()
+    .max(30, 'WhatsApp number is too long')
+    .optional(),
   message: z
     .string()
     .min(10, 'Message must be at least 10 characters')

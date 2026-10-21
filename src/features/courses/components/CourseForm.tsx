@@ -24,10 +24,15 @@ export function CourseForm({ course }: CourseFormProps) {
   const [imageUrl, setImageUrl] = useState(course?.image_url || '')
   const [uploadMode, setUploadMode] = useState<'file' | 'url'>('file')
 
+  const [category, setCategory] = useState<'curriculum' | 'course'>(
+    course?.category || 'curriculum'
+  )
+
   const [state, formAction, isPending] = useActionState(
     async (_prevState: ActionResult<Course> | null, formData: FormData) => {
-      // Ensure the image_url state is set in formData
+      // Ensure the image_url and category state are set in formData
       formData.set('image_url', imageUrl)
+      formData.set('category', category)
 
       let res: ActionResult<Course>
       if (isEditing && course) {
@@ -79,40 +84,31 @@ export function CourseForm({ course }: CourseFormProps) {
           <Label htmlFor="category" required className="text-base font-bold text-[#4C1D95]">
             القسم
           </Label>
+          <input type="hidden" name="category" value={category} />
           <div className="mt-2 grid grid-cols-2 gap-3">
-            <label
-              className={`flex items-center justify-center gap-2 p-3.5 rounded-xl border-2 cursor-pointer font-bold transition-all ${
-                (course?.category || 'curriculum') === 'curriculum'
-                  ? 'border-[#7C3AED] bg-[#EDE7FB] text-[#4C1D95]'
+            <button
+              type="button"
+              onClick={() => setCategory('curriculum')}
+              className={`flex items-center justify-center gap-2 p-3.5 rounded-xl border-2 font-bold transition-all cursor-pointer ${
+                category === 'curriculum'
+                  ? 'border-[#7C3AED] bg-[#EDE7FB] text-[#4C1D95] shadow-xs'
                   : 'border-[#EDE7FB] bg-white text-[#2D3748] hover:bg-[#F8F5FF]'
               }`}
             >
-              <input
-                type="radio"
-                name="category"
-                value="curriculum"
-                defaultChecked={course ? course.category === 'curriculum' : true}
-                className="sr-only"
-              />
               <span>المناهج التعليمية</span>
-            </label>
+            </button>
 
-            <label
-              className={`flex items-center justify-center gap-2 p-3.5 rounded-xl border-2 cursor-pointer font-bold transition-all ${
-                course?.category === 'course'
-                  ? 'border-[#7C3AED] bg-[#EDE7FB] text-[#4C1D95]'
+            <button
+              type="button"
+              onClick={() => setCategory('course')}
+              className={`flex items-center justify-center gap-2 p-3.5 rounded-xl border-2 font-bold transition-all cursor-pointer ${
+                category === 'course'
+                  ? 'border-[#7C3AED] bg-[#EDE7FB] text-[#4C1D95] shadow-xs'
                   : 'border-[#EDE7FB] bg-white text-[#2D3748] hover:bg-[#F8F5FF]'
               }`}
             >
-              <input
-                type="radio"
-                name="category"
-                value="course"
-                defaultChecked={course?.category === 'course'}
-                className="sr-only"
-              />
               <span>الكورسات</span>
-            </label>
+            </button>
           </div>
         </div>
 

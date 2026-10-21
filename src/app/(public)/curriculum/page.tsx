@@ -4,7 +4,7 @@ import { getCourses } from '@/features/courses/queries'
 import { CourseList } from '@/features/courses/components/CourseList'
 import { SITE_NAME } from '@/lib/constants'
 
-export const revalidate = 3600
+export const revalidate = 0
 
 export const metadata: Metadata = {
   title: 'المناهج التعليمية',
