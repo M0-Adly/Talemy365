@@ -20,16 +20,35 @@ async function getCryptoKey(): Promise<CryptoKey> {
   )
 }
 
-function base64UrlEncode(str: string): string {
-  return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+function bufferToBase64Url(uint8Array: Uint8Array): string {
+  let binary = ''
+  for (let i = 0; i < uint8Array.byteLength; i++) {
+    binary += String.fromCharCode(uint8Array[i])
+  }
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
 }
 
-function base64UrlDecode(str: string): string {
+function base64UrlToUint8Array(str: string): Uint8Array {
   let base64 = str.replace(/-/g, '+').replace(/_/g, '/')
   while (base64.length % 4) {
     base64 += '='
   }
-  return atob(base64)
+  const binary = atob(base64)
+  const bytes = new Uint8Array(binary.length)
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i)
+  }
+  return bytes
+}
+
+function utf8ToBase64Url(str: string): string {
+  const enc = new TextEncoder()
+  return bufferToBase64Url(enc.encode(str))
+}
+
+function base64UrlToUtf8(str: string): string {
+  const dec = new TextDecoder()
+  return dec.decode(base64UrlToUint8Array(str))
 }
 
 export async function createAdminToken(payload: {
@@ -42,13 +61,11 @@ export async function createAdminToken(payload: {
     exp: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60, // 7 days expiration
   }
 
-  const encodedPayload = base64UrlEncode(JSON.stringify(sessionData))
+  const encodedPayload = utf8ToBase64Url(JSON.stringify(sessionData))
   const key = await getCryptoKey()
   const enc = new TextEncoder()
   const signatureBuffer = await crypto.subtle.sign('HMAC', key, enc.encode(encodedPayload))
-  const signatureArray = Array.from(new Uint8Array(signatureBuffer))
-  const signatureString = String.fromCharCode.apply(null, signatureArray)
-  const encodedSignature = base64UrlEncode(signatureString)
+  const encodedSignature = bufferToBase64Url(new Uint8Array(signatureBuffer))
 
   return `${encodedPayload}.${encodedSignature}`
 }
@@ -64,25 +81,24 @@ export async function verifyAdminToken(
 
     const key = await getCryptoKey()
     const enc = new TextEncoder()
-
-    const rawSignature = base64UrlDecode(encodedSignature)
-    const sigBytes = new Uint8Array(rawSignature.length)
-    for (let i = 0; i < rawSignature.length; i++) {
-      sigBytes[i] = rawSignature.charCodeAt(i)
-    }
+    const sigBytes = base64UrlToUint8Array(encodedSignature)
 
     const isValid = await crypto.subtle.verify(
       'HMAC',
       key,
-      sigBytes,
+      sigBytes as unknown as BufferSource,
       enc.encode(encodedPayload)
     )
 
-    if (!isValid) return null
+    if (!isValid) {
+      console.warn('Admin token HMAC verification failed')
+      return null
+    }
 
-    const decoded = JSON.parse(base64UrlDecode(encodedPayload)) as AdminSessionPayload
+    const decoded = JSON.parse(base64UrlToUtf8(encodedPayload)) as AdminSessionPayload
     if (decoded.exp && decoded.exp < Math.floor(Date.now() / 1000)) {
-      return null // Token expired
+      console.warn('Admin token expired')
+      return null
     }
 
     return {
