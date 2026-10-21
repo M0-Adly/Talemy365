@@ -2,8 +2,9 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { Menu, X, BookOpen, Layers, Mail, Compass, Globe } from 'lucide-react'
+import { Menu, X, BookOpen, GraduationCap, Mail, Home, Globe } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 
@@ -13,9 +14,9 @@ export function Header() {
   const { lang, setLang, t } = useTranslation()
 
   const NAV_LINKS = [
-    { href: '/', label: t('home'), icon: Compass },
+    { href: '/', label: t('home'), icon: Home },
     { href: '/curriculum', label: t('curriculum'), icon: BookOpen },
-    { href: '/foundation', label: t('foundation'), icon: Layers },
+    { href: '/courses', label: t('courses'), icon: GraduationCap },
     { href: '/contact', label: t('contact'), icon: Mail },
   ]
 
@@ -26,16 +27,22 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-[#EDE7FB] bg-[#F8F5FF]/95 backdrop-blur-md transition-all">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Brand Logo */}
+        {/* Brand Logo with Image */}
         <Link
           href="/"
-          className="group flex items-center gap-2.5 rounded-lg py-2 text-xl font-bold tracking-tight text-[#4C1D95] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]"
+          className="group flex items-center gap-3 rounded-lg py-1 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]"
           aria-label="Home"
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#6C2BD9] text-white shadow-xs transition-transform group-hover:scale-105">
-            <BookOpen className="h-5 w-5" />
+          <div className="relative h-10 w-10 overflow-hidden rounded-xl border border-[#EDE7FB] bg-white shadow-xs transition-transform group-hover:scale-105">
+            <Image
+              src="/logo.jpeg"
+              alt="Talemy365 Logo"
+              fill
+              className="object-cover"
+              priority
+            />
           </div>
-          <span className="text-xl font-black text-[#4C1D95] group-hover:text-[#6C2BD9]">
+          <span className="text-xl font-black text-[#4C1D95] tracking-tight group-hover:text-[#6C2BD9]">
             {t('brandName')}
           </span>
         </Link>
@@ -65,24 +72,17 @@ export function Header() {
           })}
         </nav>
 
-        {/* Desktop CTA + Language Switcher */}
+        {/* Desktop Language Switcher */}
         <div className="hidden items-center gap-3 md:flex">
           <button
             type="button"
             onClick={toggleLanguage}
-            className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-[#EDE7FB] bg-white px-3.5 py-1.5 text-xs font-bold text-[#4C1D95] hover:bg-[#EDE7FB] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]"
+            className="flex min-h-[44px] items-center gap-2 rounded-xl border border-[#EDE7FB] bg-white px-4 py-2 text-xs font-bold text-[#4C1D95] hover:bg-[#EDE7FB] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]"
             title="Switch Language / تغيير اللغة"
           >
             <Globe className="h-4 w-4 text-[#7C3AED]" />
             <span>{lang === 'ar' ? 'English' : 'عربي'}</span>
           </button>
-
-          <Link
-            href="/curriculum"
-            className="flex min-h-[44px] items-center justify-center rounded-xl bg-[#7C3AED] px-5 text-sm font-semibold text-white shadow-xs transition-all hover:bg-[#6C2BD9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]"
-          >
-            {t('exploreUnits')}
-          </Link>
         </div>
 
         {/* Mobile controls */}
@@ -90,7 +90,7 @@ export function Header() {
           <button
             type="button"
             onClick={toggleLanguage}
-            className="flex h-11 items-center gap-1 rounded-xl border border-[#EDE7FB] bg-white px-3 text-xs font-bold text-[#4C1D95]"
+            className="flex h-11 items-center gap-1.5 rounded-xl border border-[#EDE7FB] bg-white px-3 text-xs font-bold text-[#4C1D95]"
           >
             <Globe className="h-4 w-4 text-[#7C3AED]" />
             <span>{lang === 'ar' ? 'EN' : 'عربي'}</span>
@@ -101,7 +101,7 @@ export function Header() {
             onClick={() => setIsOpen(!isOpen)}
             className="flex h-11 w-11 items-center justify-center rounded-xl text-[#2D3748] hover:bg-[#EDE7FB] hover:text-[#4C1D95] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]"
             aria-expanded={isOpen}
-            aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            aria-label={isOpen ? 'Close menu' : 'Open menu'}
           >
             {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
@@ -134,15 +134,6 @@ export function Header() {
                 </Link>
               )
             })}
-            <div className="mt-3 pt-3 border-t border-[#EDE7FB]">
-              <Link
-                href="/contact"
-                onClick={() => setIsOpen(false)}
-                className="flex min-h-[44px] w-full items-center justify-center rounded-xl bg-[#7C3AED] px-4 py-3 text-base font-semibold text-white shadow-xs hover:bg-[#6C2BD9]"
-              >
-                {t('getInTouch')}
-              </Link>
-            </div>
           </nav>
         </div>
       )}

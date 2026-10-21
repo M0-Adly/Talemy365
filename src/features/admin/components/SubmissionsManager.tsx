@@ -8,6 +8,7 @@ import {
   Clock,
   User,
   CornerDownRight,
+  Inbox,
 } from 'lucide-react'
 import type { ContactSubmission } from '@/types/database'
 import {
@@ -42,7 +43,6 @@ export function SubmissionsManager({
     const nextState = !current
     const prev = [...submissions]
 
-    // Optimistic update
     setSubmissions((items) =>
       items.map((item) => (item.id === id ? { ...item, is_read: nextState } : item))
     )
@@ -53,8 +53,8 @@ export function SubmissionsManager({
         setSubmissions(prev)
         addToast({
           type: 'error',
-          title: 'Update Failed',
-          message: res.error || 'Failed to update message status.',
+          title: 'خطأ',
+          message: res.error || 'فشل تحديث حالة الرسالة.',
         })
       }
     })
@@ -64,58 +64,65 @@ export function SubmissionsManager({
     const prev = [...submissions]
     setSubmissions((items) => items.filter((item) => item.id !== id))
 
-    const res = await deleteSubmission(id)
-    if (!res.success) {
-      setSubmissions(prev)
-      addToast({
-        type: 'error',
-        title: 'Delete Failed',
-        message: res.error || 'Failed to delete submission.',
-      })
-    } else {
-      addToast({
-        type: 'success',
-        title: 'Message Deleted',
-        message: 'The submission has been removed.',
-      })
-    }
+    startTransition(async () => {
+      const res = await deleteSubmission(id)
+      if (!res.success) {
+        setSubmissions(prev)
+        addToast({
+          type: 'error',
+          title: 'خطأ',
+          message: res.error || 'فشل حذف الرسالة.',
+        })
+      } else {
+        addToast({
+          type: 'success',
+          title: 'تم الحذف',
+          message: 'تم حذف الرسالة بنجاح.',
+        })
+      }
+    })
   }
+
+  const filters = [
+    { key: 'all', label: `الكل (${submissions.length})` },
+    {
+      key: 'unread',
+      label: `غير مقروءة (${submissions.filter((s) => !s.is_read).length})`,
+    },
+    {
+      key: 'read',
+      label: `مقروءة (${submissions.filter((s) => s.is_read).length})`,
+    },
+  ]
 
   return (
     <div className="space-y-6">
       {/* Filter Tabs */}
-      <div className="flex items-center gap-2 rounded-xl bg-gray-100 p-1 w-fit">
-        {(['all', 'unread', 'read'] as const).map((tab) => (
+      <div className="flex items-center gap-1.5 rounded-xl bg-[#EDE7FB] p-1 w-fit">
+        {filters.map((tab) => (
           <button
-            key={tab}
+            key={tab.key}
             type="button"
-            onClick={() => setFilter(tab)}
-            className={`min-h-[36px] rounded-lg px-4 py-1 text-xs font-semibold capitalize transition-colors ${
-              filter === tab
-                ? 'bg-white text-gray-900 shadow-xs'
-                : 'text-gray-600 hover:text-gray-900'
+            onClick={() => setFilter(tab.key as 'all' | 'unread' | 'read')}
+            className={`min-h-[38px] rounded-lg px-4 py-1 text-xs font-bold transition-all ${
+              filter === tab.key
+                ? 'bg-white text-[#4C1D95] shadow-xs'
+                : 'text-[#6B5B95] hover:text-[#4C1D95]'
             }`}
           >
-            {tab === 'all' && `All (${submissions.length})`}
-            {tab === 'unread' &&
-              `Unread (${submissions.filter((s) => !s.is_read).length})`}
-            {tab === 'read' &&
-              `Read (${submissions.filter((s) => s.is_read).length})`}
+            {tab.label}
           </button>
         ))}
       </div>
 
-      {/* Submissions list */}
       {filtered.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-12 text-center">
-          <Mail className="mx-auto h-8 w-8 text-gray-400" />
-          <h3 className="mt-2 text-sm font-semibold text-gray-900">
-            No inquiries found
+        <div className="rounded-2xl border-2 border-dashed border-[#EDE7FB] bg-white p-12 text-center">
+          <Inbox className="mx-auto h-8 w-8 text-[#A78BFA]" />
+          <h3 className="mt-3 text-base font-bold text-[#4C1D95]">
+            لا توجد رسائل واردة
           </h3>
-          <p className="mt-1 text-xs text-gray-500">
-            {filter === 'unread'
-              ? 'All incoming inquiries have been marked as read.'
-              : 'Public messages submitted through the contact form will appear here.'}
+          <p className="mt-1 text-xs text-[#6B5B95]">
+            ستظهر هنا أي استفسارات أو رسائل يرسلها الزوار من نموذج التواصل.
           </p>
         </div>
       ) : (
@@ -124,42 +131,42 @@ export function SubmissionsManager({
             <div
               key={item.id}
               className={`rounded-2xl border bg-white p-6 shadow-xs transition-colors ${
-                item.is_read ? 'border-gray-200' : 'border-blue-300 ring-1 ring-blue-100'
+                item.is_read ? 'border-[#EDE7FB]' : 'border-[#7C3AED] ring-1 ring-[#7C3AED]/20'
               }`}
             >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#EDE7FB] pb-4">
                 <div className="flex items-start gap-3">
                   <div
                     className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
                       item.is_read
-                        ? 'bg-gray-100 text-gray-500'
-                        : 'bg-blue-50 text-blue-600'
+                        ? 'bg-[#EDE7FB] text-[#6B5B95]'
+                        : 'bg-[#7C3AED] text-white'
                     }`}
                   >
                     <User className="h-5 w-5" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="font-bold text-gray-900 text-base">
+                      <h3 className="font-bold text-[#4C1D95] text-base">
                         {item.name}
                       </h3>
                       {!item.is_read && (
-                        <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-800 uppercase tracking-wide">
-                          New
+                        <span className="rounded-full bg-[#EDE7FB] px-2.5 py-0.5 text-[10px] font-bold text-[#7C3AED]">
+                          جديدة
                         </span>
                       )}
                     </div>
                     <a
                       href={`mailto:${item.email}`}
-                      className="text-xs font-semibold text-blue-600 hover:underline"
+                      className="text-xs font-semibold text-[#7C3AED] hover:underline"
                     >
                       {item.email}
                     </a>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 text-xs text-gray-400">
-                  <Clock className="h-3.5 w-3.5" />
+                <div className="flex items-center gap-2 text-xs text-[#6B5B95]">
+                  <Clock className="h-3.5 w-3.5 text-[#7C3AED]" />
                   <span title={formatDate(item.created_at)}>
                     {formatRelativeTime(item.created_at)}
                   </span>
@@ -168,19 +175,19 @@ export function SubmissionsManager({
 
               {/* Message Body */}
               <div className="pt-4">
-                <p className="whitespace-pre-wrap text-sm text-gray-700 leading-relaxed">
+                <p className="whitespace-pre-wrap text-sm text-[#2D3748] leading-relaxed">
                   {item.message}
                 </p>
               </div>
 
               {/* Actions Footer */}
-              <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-gray-100 pt-4">
+              <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-[#EDE7FB] pt-4">
                 <a
-                  href={`mailto:${item.email}?subject=Regarding your Taal3amy inquiry`}
-                  className="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+                  href={`mailto:${item.email}?subject=بخصوص استفسارك في منصة تعلّمي 365`}
+                  className="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl border border-[#EDE7FB] bg-white px-4 py-2 text-xs font-bold text-[#4C1D95] hover:bg-[#EDE7FB]"
                 >
-                  <CornerDownRight className="h-4 w-4" />
-                  <span>Reply via Email</span>
+                  <CornerDownRight className="h-4 w-4 text-[#7C3AED]" />
+                  <span>الرد عبر البريد</span>
                 </a>
 
                 <div className="flex items-center gap-2">
@@ -188,34 +195,34 @@ export function SubmissionsManager({
                     type="button"
                     onClick={() => handleToggleRead(item.id, item.is_read)}
                     disabled={isPending}
-                    className="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-600 hover:bg-gray-100 transition-colors"
+                    className="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold text-[#6B5B95] hover:bg-[#EDE7FB] transition-colors"
                   >
                     {item.is_read ? (
                       <>
                         <Mail className="h-4 w-4" />
-                        <span>Mark Unread</span>
+                        <span>تمييز كغير مقروءة</span>
                       </>
                     ) : (
                       <>
-                        <MailOpen className="h-4 w-4 text-blue-600" />
-                        <span>Mark Read</span>
+                        <MailOpen className="h-4 w-4 text-[#7C3AED]" />
+                        <span>تمييز كمقروءة</span>
                       </>
                     )}
                   </button>
 
                   <ConfirmDialog
-                    title="Delete Submission"
-                    description={`Are you sure you want to permanently delete this message from ${item.name}?`}
-                    confirmLabel="Delete Message"
+                    title="تأكيد حذف الرسالة"
+                    description={`هل أنت متأكد من حذف رسالة ${item.name} نهائياً؟`}
+                    confirmLabel="حذف نهائي"
                     variant="destructive"
                     onConfirm={async () => handleDelete(item.id)}
                     trigger={
                       <button
                         type="button"
                         disabled={isPending}
-                        className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-gray-400 hover:bg-rose-50 hover:text-rose-600 transition-colors"
-                        title="Delete message"
-                        aria-label={`Delete message from ${item.name}`}
+                        className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl text-rose-500 hover:bg-rose-50 transition-colors"
+                        title="حذف الرسالة"
+                        aria-label={`حذف رسالة ${item.name}`}
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>

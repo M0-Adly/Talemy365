@@ -5,7 +5,7 @@ import { SubmissionsManager } from '@/features/admin/components/SubmissionsManag
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Inquiries & Contact Submissions',
+  title: 'رسائل واستفسارات الزوار',
 }
 
 export default async function ContactSubmissionsPage() {
@@ -14,11 +14,11 @@ export default async function ContactSubmissionsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-          Inquiries & Contact Messages
+        <h1 className="text-2xl font-black tracking-tight text-[#4C1D95] sm:text-3xl">
+          الرسائل والاستفسارات الواردة
         </h1>
-        <p className="mt-1 text-sm text-gray-500">
-          Messages submitted by prospective students through the public contact form.
+        <p className="mt-1 text-xs text-[#6B5B95]">
+          الرسائل والطلبات المرسلة من زوار الموقع عبر نموذج التواصل.
         </p>
       </div>
 

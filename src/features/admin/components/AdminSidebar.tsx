@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard,
@@ -11,28 +12,27 @@ import {
   Menu,
   X,
   ExternalLink,
-  Shield,
 } from 'lucide-react'
 import { logout } from '@/features/auth/actions'
 import { cn } from '@/lib/utils'
-import { SITE_NAME, ADMIN_PATH } from '@/lib/constants'
+import { ADMIN_PATH } from '@/lib/constants'
 
 const ADMIN_LINKS = [
   {
     href: `${ADMIN_PATH}`,
-    label: 'Dashboard',
+    label: 'الرئيسية والإحصائيات',
     icon: LayoutDashboard,
     exact: true,
   },
   {
     href: `${ADMIN_PATH}/courses`,
-    label: 'Courses & Units',
+    label: 'المناهج والكورسات',
     icon: BookOpen,
     exact: false,
   },
   {
     href: `${ADMIN_PATH}/contact-submissions`,
-    label: 'Inquiries',
+    label: 'الرسائل الواردة',
     icon: MessageSquare,
     exact: false,
   },
@@ -49,56 +49,66 @@ export function AdminSidebar() {
   return (
     <>
       {/* Mobile Topbar */}
-      <div className="flex h-16 items-center justify-between border-b border-gray-200 bg-white px-4 md:hidden">
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white font-bold text-sm">
-            T
+      <div className="flex h-16 items-center justify-between border-b border-[#EDE7FB] bg-white px-4 md:hidden">
+        <div className="flex items-center gap-2.5">
+          <div className="relative h-9 w-9 overflow-hidden rounded-xl border border-[#EDE7FB] bg-white">
+            <Image
+              src="/logo.jpeg"
+              alt="Logo"
+              fill
+              className="object-cover"
+            />
           </div>
-          <span className="font-bold text-gray-900">{SITE_NAME} Admin</span>
+          <span className="font-bold text-[#4C1D95]">لوحة تحكم تعلّمي</span>
         </div>
 
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="flex h-11 w-11 items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100"
-          aria-label={isOpen ? 'Close menu' : 'Open menu'}
+          className="flex h-11 w-11 items-center justify-center rounded-xl text-[#2D3748] hover:bg-[#EDE7FB] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]"
+          aria-expanded={isOpen}
+          aria-label={isOpen ? 'إغلاق القائمة' : 'فتح القائمة'}
         >
           {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
       </div>
 
-      {/* Sidebar Overlay for Mobile */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-xs md:hidden"
-          onClick={() => setIsOpen(false)}
-        />
-      )}
-
-      {/* Main Sidebar */}
+      {/* Desktop Sidebar & Mobile Drawer */}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-gray-200 bg-white transition-transform duration-200 md:static md:translate-x-0',
-          isOpen ? 'translate-x-0' : '-translate-x-full'
+          'fixed inset-y-0 right-0 z-30 flex w-64 flex-col border-l border-[#EDE7FB] bg-[#F8F5FF] transition-transform duration-200 md:static md:translate-x-0',
+          isOpen ? 'translate-x-0' : 'translate-x-full md:translate-x-0'
         )}
       >
-        {/* Brand */}
-        <div className="flex h-16 items-center gap-2.5 border-b border-gray-200 px-6">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-white shadow-xs">
-            <Shield className="h-5 w-5" />
+        {/* Header / Brand */}
+        <div className="flex h-16 items-center justify-between border-b border-[#EDE7FB] px-6 bg-white">
+          <div className="flex items-center gap-3">
+            <div className="relative h-9 w-9 overflow-hidden rounded-xl border border-[#EDE7FB] bg-white">
+              <Image
+                src="/logo.jpeg"
+                alt="Logo"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div>
+              <span className="block font-black text-[#4C1D95] text-sm">تعلّمي 365</span>
+              <span className="block text-[10px] font-bold text-[#7C3AED]">لوحة الإدارة</span>
+            </div>
           </div>
-          <div>
-            <span className="block text-base font-bold text-gray-900">
-              {SITE_NAME}
-            </span>
-            <span className="block text-xs font-medium text-blue-600">
-              Admin Portal
-            </span>
-          </div>
+
+          <button
+            type="button"
+            onClick={() => setIsOpen(false)}
+            className="rounded-lg p-1 text-[#6B5B95] hover:bg-[#EDE7FB] md:hidden"
+            aria-label="إغلاق"
+          >
+            <X className="h-5 w-5" />
+          </button>
         </div>
 
-        {/* Navigation links */}
-        <nav className="flex-1 space-y-1.5 p-4" aria-label="Admin Navigation">
+        {/* Navigation Links */}
+        <nav className="flex-1 space-y-1.5 p-4" aria-label="لوحة الإدارة">
           {ADMIN_LINKS.map((link) => {
             const isActive = link.exact
               ? pathname === link.href
@@ -111,10 +121,10 @@ export function AdminSidebar() {
                 href={link.href}
                 onClick={() => setIsOpen(false)}
                 className={cn(
-                  'flex min-h-[44px] items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition-colors',
+                  'flex min-h-[44px] items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]',
                   isActive
-                    ? 'bg-blue-50 text-blue-700'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    ? 'bg-[#7C3AED] text-white shadow-xs'
+                    : 'text-[#2D3748] hover:bg-[#EDE7FB] hover:text-[#4C1D95]'
                 )}
               >
                 <Icon className="h-5 w-5 shrink-0" />
@@ -124,27 +134,36 @@ export function AdminSidebar() {
           })}
         </nav>
 
-        {/* Footer Actions */}
-        <div className="border-t border-gray-200 p-4 space-y-2">
+        {/* Bottom Actions */}
+        <div className="border-t border-[#EDE7FB] p-4 space-y-2 bg-white">
           <Link
             href="/"
             target="_blank"
-            className="flex min-h-[44px] items-center gap-2.5 rounded-xl px-3.5 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+            className="flex min-h-[44px] items-center gap-2 rounded-xl border border-[#EDE7FB] px-4 py-2 text-xs font-bold text-[#4C1D95] hover:bg-[#EDE7FB] transition-colors"
           >
-            <ExternalLink className="h-4 w-4" />
-            <span>View Public Website</span>
+            <ExternalLink className="h-4 w-4 text-[#7C3AED]" />
+            <span>معاينة الموقع العام</span>
           </Link>
 
           <button
             type="button"
             onClick={handleLogout}
-            className="flex min-h-[44px] w-full items-center gap-2.5 rounded-xl px-3.5 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500"
+            className="flex min-h-[44px] w-full items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500"
           >
             <LogOut className="h-4 w-4" />
-            <span>Sign Out</span>
+            <span>تسجيل الخروج</span>
           </button>
         </div>
       </aside>
+
+      {/* Backdrop for mobile */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-20 bg-black/40 backdrop-blur-xs md:hidden"
+          onClick={() => setIsOpen(false)}
+          aria-hidden="true"
+        />
+      )}
     </>
   )
 }

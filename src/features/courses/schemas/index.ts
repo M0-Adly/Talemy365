@@ -9,22 +9,25 @@ export const courseSchema = z.object({
     .string()
     .max(5000, 'Description must be 5000 characters or less')
     .nullable()
+    .optional()
     .default(null),
-  category: z.enum(['curriculum', 'foundation']),
+  category: z.enum(['curriculum', 'course']),
   duration: z
     .string()
     .max(100, 'Duration must be 100 characters or less')
     .nullable()
+    .optional()
     .default(null),
   icon: z
     .string()
     .max(100, 'Icon must be 100 characters or less')
     .nullable()
+    .optional()
     .default(null),
   image_url: z
     .string()
-    .max(1000, 'Image URL must be 1000 characters or less')
     .nullable()
+    .optional()
     .default(null),
   is_published: z.boolean().default(true),
 })

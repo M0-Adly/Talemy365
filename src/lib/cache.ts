@@ -6,7 +6,7 @@ export function revalidateAll() {
 
 export function revalidateCourses() {
   revalidatePath('/curriculum', 'page')
-  revalidatePath('/foundation', 'page')
+  revalidatePath('/courses', 'page')
   revalidatePath('/', 'page')
   revalidatePath('/mudir/courses', 'page')
   revalidatePath('/mudir', 'page')
@@ -15,6 +15,7 @@ export function revalidateCourses() {
 export function revalidateCourse(id: string) {
   revalidateCourses()
   revalidatePath(`/curriculum/${id}`, 'page')
+  revalidatePath(`/courses/${id}`, 'page')
   revalidatePath(`/mudir/courses/${id}`, 'page')
   revalidatePath(`/mudir/courses/${id}/contents`, 'page')
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState, useState } from 'react'
+import { useActionState, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { createCourse, updateCourse } from '@/features/courses/actions'
 import { ADMIN_PATH } from '@/lib/constants'
-import { AlertCircle, ArrowLeft, Save, Image as ImageIcon } from 'lucide-react'
+import { AlertCircle, ArrowLeft, Save, Upload, Link as LinkIcon, X } from 'lucide-react'
 import type { Course } from '@/types/database'
 import type { ActionResult } from '@/lib/errors'
 
@@ -20,12 +20,16 @@ interface CourseFormProps {
 export function CourseForm({ course }: CourseFormProps) {
   const router = useRouter()
   const isEditing = Boolean(course)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const [imageUrl, setImageUrl] = useState(course?.image_url || '')
+  const [uploadMode, setUploadMode] = useState<'file' | 'url'>('file')
 
   const [state, formAction, isPending] = useActionState(
     async (_prevState: ActionResult<Course> | null, formData: FormData) => {
-      let res: ActionResult<Course>
+      // Ensure the image_url state is set in formData
+      formData.set('image_url', imageUrl)
 
+      let res: ActionResult<Course>
       if (isEditing && course) {
         res = await updateCourse(course.id, formData)
       } else {
@@ -42,136 +46,219 @@ export function CourseForm({ course }: CourseFormProps) {
     null
   )
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Convert file to base64 Data URL for instant storage & preview
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      const result = event.target?.result as string
+      if (result) {
+        setImageUrl(result)
+      }
+    }
+    reader.readAsDataURL(file)
+  }
+
   return (
-    <form action={formAction} className="space-y-8">
+    <form action={formAction} className="space-y-6 max-w-3xl">
       {state && !state.success && (
-        <div className="flex items-start gap-3 rounded-xl bg-rose-50 border border-rose-200 p-4 text-rose-800 text-sm">
+        <div className="flex items-start gap-3 rounded-2xl bg-rose-50 border border-rose-200 p-4 text-rose-800 text-sm">
           <AlertCircle className="h-5 w-5 shrink-0 text-rose-600 mt-0.5" />
           <div>
-            <h4 className="font-semibold text-rose-900">Submission Error</h4>
+            <h4 className="font-bold text-rose-900">حدث خطأ أثناء الحفظ</h4>
             <p className="mt-0.5">{state.error}</p>
           </div>
         </div>
       )}
 
       <div className="rounded-2xl border border-[#EDE7FB] bg-white p-6 sm:p-8 shadow-xs space-y-6">
-        {/* Title */}
+        {/* Category: المناهج التعليمية أو الكورسات */}
         <div>
-          <Label htmlFor="title" required className="text-[#4C1D95]">
-            عنوان الوحدة / Course Title
+          <Label htmlFor="category" required className="text-base font-bold text-[#4C1D95]">
+            القسم
+          </Label>
+          <div className="mt-2 grid grid-cols-2 gap-3">
+            <label
+              className={`flex items-center justify-center gap-2 p-3.5 rounded-xl border-2 cursor-pointer font-bold transition-all ${
+                (course?.category || 'curriculum') === 'curriculum'
+                  ? 'border-[#7C3AED] bg-[#EDE7FB] text-[#4C1D95]'
+                  : 'border-[#EDE7FB] bg-white text-[#2D3748] hover:bg-[#F8F5FF]'
+              }`}
+            >
+              <input
+                type="radio"
+                name="category"
+                value="curriculum"
+                defaultChecked={course ? course.category === 'curriculum' : true}
+                className="sr-only"
+              />
+              <span>المناهج التعليمية</span>
+            </label>
+
+            <label
+              className={`flex items-center justify-center gap-2 p-3.5 rounded-xl border-2 cursor-pointer font-bold transition-all ${
+                course?.category === 'course'
+                  ? 'border-[#7C3AED] bg-[#EDE7FB] text-[#4C1D95]'
+                  : 'border-[#EDE7FB] bg-white text-[#2D3748] hover:bg-[#F8F5FF]'
+              }`}
+            >
+              <input
+                type="radio"
+                name="category"
+                value="course"
+                defaultChecked={course?.category === 'course'}
+                className="sr-only"
+              />
+              <span>الكورسات</span>
+            </label>
+          </div>
+        </div>
+
+        {/* Title / Name */}
+        <div>
+          <Label htmlFor="title" required className="text-base font-bold text-[#4C1D95]">
+            اسم الكورس أو المنهج التعليمي
           </Label>
           <div className="mt-2">
             <Input
               id="title"
               name="title"
               defaultValue={course?.title || ''}
-              placeholder="مثال: الوحدة 01: المبادئ الأساسية للتفكير المنطقي"
+              placeholder="اكتب اسم الكورس أو المنهج..."
               required
               disabled={isPending}
+              className="text-base h-12 border-[#EDE7FB] focus-visible:ring-[#7C3AED]"
             />
           </div>
         </div>
 
-        {/* Category & Duration Row */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-          <div>
-            <Label htmlFor="category" required className="text-[#4C1D95]">
-              الفئة / Category
+        {/* Image Upload / URL */}
+        <div>
+          <div className="flex items-center justify-between">
+            <Label className="text-base font-bold text-[#4C1D95]">
+              صورة الكورس أو المنهج
             </Label>
-            <div className="mt-2">
-              <select
-                id="category"
-                name="category"
-                defaultValue={course?.category || 'curriculum'}
-                disabled={isPending}
-                className="flex h-11 w-full rounded-xl border border-[#EDE7FB] bg-white px-3 py-2 text-base transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] min-h-[44px]"
+            <div className="flex items-center gap-1 bg-[#F8F5FF] p-1 rounded-lg border border-[#EDE7FB]">
+              <button
+                type="button"
+                onClick={() => setUploadMode('file')}
+                className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${
+                  uploadMode === 'file'
+                    ? 'bg-[#7C3AED] text-white shadow-xs'
+                    : 'text-[#6B5B95] hover:text-[#4C1D95]'
+                }`}
               >
-                <option value="curriculum">المنهج الدراسي (13 وحدة)</option>
-                <option value="foundation">الدورة التأسيسية (4 مراحل)</option>
-              </select>
+                رفع من الجهاز
+              </button>
+              <button
+                type="button"
+                onClick={() => setUploadMode('url')}
+                className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${
+                  uploadMode === 'url'
+                    ? 'bg-[#7C3AED] text-white shadow-xs'
+                    : 'text-[#6B5B95] hover:text-[#4C1D95]'
+                }`}
+              >
+                رابط صورة
+              </button>
             </div>
           </div>
 
-          <div>
-            <Label htmlFor="duration" className="text-[#4C1D95]">
-              المدة / Duration
-            </Label>
-            <div className="mt-2">
-              <Input
-                id="duration"
-                name="duration"
-                defaultValue={course?.duration || ''}
-                placeholder="مثال: 6 أسابيع (24 ساعة)"
+          <input type="hidden" name="image_url" value={imageUrl} />
+
+          {/* Mode 1: File Upload */}
+          {uploadMode === 'file' && (
+            <div className="mt-3">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="hidden"
                 disabled={isPending}
               />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isPending}
+                className="flex flex-col items-center justify-center w-full min-h-[120px] rounded-2xl border-2 border-dashed border-[#7C3AED]/40 bg-[#F8F5FF] hover:bg-[#EDE7FB]/50 p-4 transition-colors cursor-pointer"
+              >
+                <Upload className="h-8 w-8 text-[#7C3AED] mb-2" />
+                <span className="text-sm font-bold text-[#4C1D95]">
+                  اضغط لاختيار صورة من جهازك
+                </span>
+                <span className="text-xs text-[#6B5B95] mt-1">
+                  يدعم صور JPG و PNG و WebP
+                </span>
+              </button>
             </div>
-          </div>
-        </div>
+          )}
 
-        {/* Image URL Input & Preview */}
-        <div>
-          <Label htmlFor="image_url" className="text-[#4C1D95]">
-            رابط صورة الكورس / Course Image URL
-          </Label>
-          <div className="mt-2 flex flex-col sm:flex-row gap-4 items-start">
-            <div className="relative flex-1 w-full">
+          {/* Mode 2: Direct URL */}
+          {uploadMode === 'url' && (
+            <div className="mt-3 relative">
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-[#6B5B95]">
+                <LinkIcon className="h-4 w-4" />
+              </div>
               <Input
-                id="image_url"
-                name="image_url"
                 value={imageUrl}
                 onChange={(e) => setImageUrl(e.target.value)}
-                placeholder="https://images.unsplash.com/photo-... أو أي رابط صورة"
+                placeholder="https://example.com/image.jpg"
                 disabled={isPending}
+                className="pr-10 border-[#EDE7FB] focus-visible:ring-[#7C3AED]"
               />
             </div>
+          )}
 
-            {imageUrl ? (
-              <div className="relative h-20 w-32 shrink-0 rounded-xl overflow-hidden border border-[#EDE7FB] bg-[#F8F5FF]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={imageUrl}
-                  alt="Preview"
-                  className="h-full w-full object-cover"
-                  onError={() => setImageUrl('')}
-                />
-              </div>
-            ) : (
-              <div className="flex h-20 w-32 shrink-0 items-center justify-center rounded-xl border border-dashed border-[#EDE7FB] bg-[#F8F5FF] text-[#6B5B95] text-xs">
-                <ImageIcon className="h-5 w-5 mr-1" />
-                <span>معاينة الصورة</span>
-              </div>
-            )}
-          </div>
-          <p className="mt-1 text-xs text-[#6B5B95]">
-            ضع رابط صورة مباشر (Unsplash / Imgur / Supabase Storage) ليتم عرضها في بطاقات الموقع.
-          </p>
+          {/* Live Preview */}
+          {imageUrl && (
+            <div className="mt-4 relative h-48 w-full sm:w-80 rounded-2xl overflow-hidden border-2 border-[#EDE7FB] bg-[#F8F5FF] shadow-xs">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={imageUrl}
+                alt="Preview"
+                className="h-full w-full object-cover"
+              />
+              <button
+                type="button"
+                onClick={() => setImageUrl('')}
+                className="absolute top-2 left-2 flex h-8 w-8 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors"
+                title="إزالة الصورة"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          )}
         </div>
 
-        {/* Description */}
+        {/* Optional Description */}
         <div>
-          <Label htmlFor="description" className="text-[#4C1D95]">
-            الوصف والأهداف الأكاديمية / Course Description
+          <Label htmlFor="description" className="text-sm font-bold text-[#4C1D95]">
+            نبذة أو وصف (اختياري)
           </Label>
           <div className="mt-2">
             <Textarea
               id="description"
               name="description"
-              rows={4}
+              rows={3}
               defaultValue={course?.description || ''}
-              placeholder="اكتب وصفاً مفصلاً ومبسطاً لأهداف وموضوعات الوحدة..."
+              placeholder="اكتب نبذة مختصرة عن الكورس أو المنهج إن رغبت..."
               disabled={isPending}
+              className="border-[#EDE7FB] focus-visible:ring-[#7C3AED]"
             />
           </div>
         </div>
 
-        {/* Publication Status Toggle */}
+        {/* Publish Checkbox */}
         <div className="flex items-center justify-between rounded-xl border border-[#EDE7FB] bg-[#F8F5FF] p-4">
           <div>
-            <span className="block text-sm font-semibold text-[#4C1D95]">
-              حالة النشر / Published Status
+            <span className="block text-sm font-bold text-[#4C1D95]">
+              حالة النشر
             </span>
             <span className="block text-xs text-[#6B5B95]">
-              عند التفعيل، يظهر الكورس فوراً في الموقع العام للزوار.
+              تفعيل هذا الخيار ليظهر الكورس فوراً لزوار الموقع.
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -181,23 +268,23 @@ export function CourseForm({ course }: CourseFormProps) {
               name="is_published"
               value="true"
               defaultChecked={course ? course.is_published : true}
-              className="h-5 w-5 rounded border-gray-300 text-[#7C3AED] focus:ring-[#7C3AED]"
+              className="h-5 w-5 rounded border-[#EDE7FB] text-[#7C3AED] focus:ring-[#7C3AED]"
             />
-            <label htmlFor="is_published" className="text-sm font-medium text-[#2D3748]">
-              نشر فوراً (Publish)
+            <label htmlFor="is_published" className="text-sm font-bold text-[#2D3748] cursor-pointer">
+              نشر فوراً
             </label>
           </div>
         </div>
       </div>
 
-      {/* Action buttons */}
+      {/* Buttons */}
       <div className="flex items-center justify-between gap-4">
         <Link
           href={`${ADMIN_PATH}/courses`}
-          className="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-[#EDE7FB] bg-white px-5 py-2.5 text-sm font-semibold text-[#4C1D95] hover:bg-[#EDE7FB]"
+          className="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-[#EDE7FB] bg-white px-5 py-2.5 text-sm font-bold text-[#4C1D95] hover:bg-[#EDE7FB]"
         >
           <ArrowLeft className="h-4 w-4" />
-          <span>إلغاء</span>
+          <span>رجوع</span>
         </Link>
 
         <Button
@@ -205,9 +292,10 @@ export function CourseForm({ course }: CourseFormProps) {
           size="lg"
           isLoading={isPending}
           disabled={isPending}
+          className="px-8 font-bold"
         >
-          <Save className="mr-2 h-4 w-4" />
-          <span>{isEditing ? 'حفظ التعديلات' : 'إنشاء الكورس'}</span>
+          <Save className="ml-2 h-4 w-4" />
+          <span>{isEditing ? 'حفظ التعديلات' : 'إضافة الآن'}</span>
         </Button>
       </div>
     </form>

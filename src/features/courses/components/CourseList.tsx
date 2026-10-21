@@ -1,17 +1,28 @@
+'use client'
+
 import type { Course } from '@/types/database'
 import { CourseCard } from './CourseCard'
+import { useTranslation } from '@/lib/i18n'
+import { Sparkles } from 'lucide-react'
 
 interface CourseListProps {
   courses: Course[]
 }
 
 export function CourseList({ courses }: CourseListProps) {
-  if (courses.length === 0) {
+  const { t } = useTranslation()
+
+  if (!courses || courses.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-gray-300 p-12 text-center">
-        <h3 className="text-lg font-semibold text-gray-900">No courses available yet</h3>
-        <p className="mt-2 text-sm text-gray-500">
-          The curriculum is currently being updated. Please check back soon!
+      <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[#EDE7FB] bg-white p-12 text-center shadow-xs">
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#EDE7FB] text-[#7C3AED]">
+          <Sparkles className="h-7 w-7" />
+        </div>
+        <h3 className="mt-4 text-xl font-bold text-[#4C1D95]">
+          {t('comingSoon')}
+        </h3>
+        <p className="mt-2 max-w-md text-sm leading-relaxed text-[#6B5B95]">
+          {t('comingSoonDesc')}
         </p>
       </div>
     )
